@@ -36,7 +36,8 @@ class CandyProgramSelect(CoordinatorEntity, SelectEntity):
         super().__init__(coordinator)
         self.config_id = config_id
         self._attr_unique_id = UNIQUE_ID_PROGRAM_SELECT.format(config_id)
-        self._attr_name = "Candy Dishwasher Program"
+        self._attr_translation_key = "program"
+        self._attr_has_entity_name = True
         self._attr_options = list(DISHWASHER_PROGRAMS.keys())
         self._attr_current_option = "eco"  # Eco as default
 
@@ -101,7 +102,8 @@ class CandyOptionSelect(CoordinatorEntity, SelectEntity):
         super().__init__(coordinator)
         self.config_id = config_id
         self._attr_unique_id = UNIQUE_ID_OPTION_SELECT.format(config_id)
-        self._attr_name = "Candy Dishwasher Option"
+        self._attr_translation_key = "candy_dishwasher_option"
+        self._attr_has_entity_name = True
         self._attr_options = list(OPTION_MAPPING.keys())
         self._attr_current_option = "standard"  # Default
 

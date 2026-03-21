@@ -10,9 +10,9 @@
         "step": {
             "user": {
                 "data": {
-                    "ip_address" : "Adresse IP du dispositif",
-                    "password" : "Clé de cryptage",
-                    "use_encryption" : "Utiliser la clé de cryptage"
+                    "ip_address": "Adresse IP du dispositif",
+                    "password": "Clé de cryptage",
+                    "use_encryption": "Utiliser la clé de cryptage"
                 }
             }
         }
@@ -33,6 +33,7 @@
         },
         "select": {
             "program": {
+                "name": "Programme",
                 "state": {
                     "intensive": "Intensif (75°C)",
                     "universal": "Universel (60°C)",
@@ -43,6 +44,7 @@
                 }
             },
             "candy_dishwasher_option": {
+                "name": "Option",
                 "state": {
                     "standard": "Standard",
                     "extra_dry": "Séchage Extra",
