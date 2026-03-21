@@ -23,6 +23,8 @@ UNIQUE_ID_DISHWASHER_REMAINING_TIME = "{0}-dishwasher_remaining_time"
 
 UNIQUE_ID_PROGRAM_SELECT = "{0}-program_select"
 UNIQUE_ID_START_BUTTON = "{0}-start_button"
+UNIQUE_ID_PAUSE_BUTTON = "{0}-pause_button"
+UNIQUE_ID_STOP_BUTTON = "{0}-stop_button"
 
 DEVICE_NAME_WASHING_MACHINE = "Washing machine"
 DEVICE_NAME_TUMBLE_DRYER = "Tumble dryer"
@@ -38,5 +40,20 @@ DISHWASHER_PROGRAMS = {
     "19": "P19 (Rapide 39')",
 }
 
+RESET_PAYLOAD = {"Reset": "1"}
+PAUSE_PAYLOAD = {"StartStop": "0"}
+
 SUGGESTED_AREA_BATHROOM = "Bathroom"
 SUGGESTED_AREA_KITCHEN = "Kitchen"
+
+DEFAULT_DISHWASHER_PAYLOAD = {
+    "DelayStart": "0",
+    "ExtraDry": "0",
+    "OpenDoorOpt": "0",
+    "TreinUno": "0",
+    "Program": "P12",
+    "MetaCarico": "0",
+    "OpzProg": "0",
+    "w1": "4",
+    "StartStop": "1",
+}

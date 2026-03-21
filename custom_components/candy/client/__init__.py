@@ -66,16 +66,17 @@ class CandyClient:
 
     @backoff.on_exception(backoff.expo, aiohttp.ClientError, max_tries=10, logger=__name__)
     @backoff.on_exception(backoff.expo, TimeoutError, max_tries=10, logger=__name__)
-    async def write(self, command: str):
-        data = f"Write=1&{command}"
+    async def write(self, data: dict):
+        from urllib.parse import urlencode
+        query_string = urlencode(data)
         if self.use_encryption:
             if self.encryption_key != "":
-                encrypted_bytes = xor_data(self.encryption_key.encode(), data.encode())
+                encrypted_bytes = xor_data(self.encryption_key.encode(), query_string.encode())
             else:
-                encrypted_bytes = data.encode()
+                encrypted_bytes = query_string.encode()
             hex_data = encrypted_bytes.hex()
         else:
-            hex_data = data.encode().hex()
+            hex_data = query_string.encode().hex()
 
         url = f"http://{self.device_ip}/http-write.json?encrypted={1 if self.use_encryption else 0}&data={hex_data}"
         async with _LIMITER, self.session.get(url) as resp:

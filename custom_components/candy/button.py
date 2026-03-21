@@ -4,17 +4,31 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, DATA_KEY_COORDINATOR, DATA_KEY_CLIENT, UNIQUE_ID_START_BUTTON, DEVICE_NAME_DISHWASHER, DISHWASHER_PROGRAMS
+from .const import (
+    DOMAIN,
+    DATA_KEY_COORDINATOR,
+    DATA_KEY_CLIENT,
+    UNIQUE_ID_START_BUTTON,
+    UNIQUE_ID_PAUSE_BUTTON,
+    UNIQUE_ID_STOP_BUTTON,
+    DEVICE_NAME_DISHWASHER,
+    DISHWASHER_PROGRAMS,
+    DEFAULT_DISHWASHER_PAYLOAD,
+    RESET_PAYLOAD,
+    PAUSE_PAYLOAD,
+)
 from .client.model import DishwasherStatus
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities):
-    """Set up the Candy start button."""
+    """Set up the Candy buttons."""
     config_id = config_entry.entry_id
     coordinator = hass.data[DOMAIN][config_id][DATA_KEY_COORDINATOR]
 
     if isinstance(coordinator.data, DishwasherStatus):
         async_add_entities([
-            CandyStartButton(coordinator, config_id, hass)
+            CandyStartButton(coordinator, config_id, hass),
+            CandyPauseButton(coordinator, config_id, hass),
+            CandyStopButton(coordinator, config_id, hass),
         ])
 
 class CandyStartButton(CoordinatorEntity, ButtonEntity):
@@ -45,4 +59,55 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
             if program_id:
                 client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
                 if client:
-                    await client.write(f"StSt=1&PrNm={program_id}")
+                    payload = DEFAULT_DISHWASHER_PAYLOAD.copy()
+                    payload["Program"] = f"P{program_id}"
+                    payload["w1"] = program_id
+                    await client.write(payload)
+
+class CandyPauseButton(CoordinatorEntity, ButtonEntity):
+    """Candy pause button entity."""
+
+    def __init__(self, coordinator, config_id, hass):
+        super().__init__(coordinator)
+        self.config_id = config_id
+        self.hass = hass
+        self._attr_unique_id = UNIQUE_ID_PAUSE_BUTTON.format(config_id)
+        self._attr_name = "Pause"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.config_id)},
+            name=DEVICE_NAME_DISHWASHER,
+            manufacturer="Candy",
+        )
+
+    async def async_press(self) -> None:
+        """Press the button."""
+        client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
+        if client:
+            await client.write(PAUSE_PAYLOAD)
+
+class CandyStopButton(CoordinatorEntity, ButtonEntity):
+    """Candy stop button entity."""
+
+    def __init__(self, coordinator, config_id, hass):
+        super().__init__(coordinator)
+        self.config_id = config_id
+        self.hass = hass
+        self._attr_unique_id = UNIQUE_ID_STOP_BUTTON.format(config_id)
+        self._attr_name = "Stop"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.config_id)},
+            name=DEVICE_NAME_DISHWASHER,
+            manufacturer="Candy",
+        )
+
+    async def async_press(self) -> None:
+        """Press the button."""
+        client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
+        if client:
+            await client.write(RESET_PAYLOAD)
