@@ -497,7 +497,7 @@ class CandyRinseSensor(CandyBaseSensor):
     def icon(self) -> str:
         return "mdi:water-opacity"
 
-class CandyDoorSensor(CandyBaseSensor, BinarySensorEntity):
+class CandyDoorSensor(CoordinatorEntity, BinarySensorEntity):
 
     def device_name(self) -> str:
         return DEVICE_NAME_DISHWASHER

@@ -8,6 +8,7 @@ import backoff
 from aiohttp import ClientSession
 
 from aiolimiter import AsyncLimiter
+from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from .decryption import xor_data, Encryption, find_key
 from .model import (DishwasherStatus, OvenStatus, TumbleDryerStatus,
@@ -37,7 +38,11 @@ class CandyClient:
     async def status(self) -> Union[WashingMachineStatus, TumbleDryerStatus, DishwasherStatus, OvenStatus]:
         url = _status_url(self.device_ip, self.use_encryption)
         async with _LIMITER, self.session.get(url) as resp:
-            resp.raise_for_status()
+            try:
+                resp.raise_for_status()
+            except aiohttp.ClientError as err:
+                raise UpdateFailed(f"Error communicating with API: {err}") from err
+
             if self.use_encryption:
                 resp_hex = await resp.text()  # Response is hex encoded, either encrypted or not
                 if self.encryption_key != "":

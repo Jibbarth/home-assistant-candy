@@ -25,6 +25,7 @@ UNIQUE_ID_DISHWASHER_RINSE = "{0}-dishwasher_rinse"
 UNIQUE_ID_DISHWASHER_DOOR = "{0}-dishwasher_door"
 
 UNIQUE_ID_PROGRAM_SELECT = "{0}-program_select"
+UNIQUE_ID_DELAY_SELECT = "{0}-delay_select"
 UNIQUE_ID_START_BUTTON = "{0}-start_button"
 UNIQUE_ID_PAUSE_BUTTON = "{0}-pause_button"
 UNIQUE_ID_STOP_BUTTON = "{0}-stop_button"
