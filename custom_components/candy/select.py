@@ -27,16 +27,18 @@ class CandyProgramSelect(CoordinatorEntity, SelectEntity):
         self.config_id = config_id
         self._attr_unique_id = UNIQUE_ID_PROGRAM_SELECT.format(config_id)
         self._attr_name = "Program"
-        self._attr_options = list(DISHWASHER_PROGRAMS.values())
-        self._attr_current_option = self._attr_options[2] # P3 (Eco) as default
+        self._attr_options = list(DISHWASHER_PROGRAMS.keys())
+        self._attr_current_option = "eco" # Eco as default
 
     @property
     def current_option(self) -> str | None:
         """Return the current selected option."""
         if self.coordinator.data and hasattr(self.coordinator.data, "program"):
             program_id = self.coordinator.data.program
-            if program_id in DISHWASHER_PROGRAMS:
-                return DISHWASHER_PROGRAMS[program_id]
+            # map Px back to key
+            key = next((k for k, v in DISHWASHER_PROGRAMS.items() if v == program_id), None)
+            if key:
+                return key
         return self._attr_current_option
 
     @property

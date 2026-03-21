@@ -17,5 +17,40 @@
             }
         }
     },
+    "entity": {
+        "binary_sensor": {
+            "door_sensor": {
+                "name": "Porte"
+            }
+        },
+        "sensor": {
+            "salt_level": {
+                "name": "Niveau de sel"
+            },
+            "rinse_aid_level": {
+                "name": "Liquide de rinçage"
+            }
+        },
+        "select": {
+            "program": {
+                "state": {
+                    "intensive": "Intensif (75°C)",
+                    "universal": "Universel (60°C)",
+                    "eco": "Eco (45°C)",
+                    "quick_24": "Rapide 24'",
+                    "prewash": "Prélavage",
+                    "quick_39": "Rapide 39'"
+                }
+            },
+            "candy_dishwasher_option": {
+                "state": {
+                    "standard": "Standard",
+                    "extra_dry": "Séchage Extra",
+                    "half_load": "Demi-charge",
+                    "eco": "Eco"
+                }
+            }
+        }
+    },
     "title": "Candy"
 }

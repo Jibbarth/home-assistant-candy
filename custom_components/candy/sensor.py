@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Mapping
 
+from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -46,7 +47,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
     elif isinstance(coordinator.data, DishwasherStatus):
         async_add_entities([
             CandyDishwasherSensor(coordinator, config_id),
-            CandyDishwasherRemainingTimeSensor(coordinator, config_id)
+            CandyDishwasherRemainingTimeSensor(coordinator, config_id),
+            CandySaltSensor(coordinator, config_id),
+            CandyRinseSensor(coordinator, config_id),
+            CandyDoorSensor(coordinator, config_id)
         ])
     else:
         raise Exception(f"Unable to determine machine type: {coordinator.data}")
@@ -440,3 +444,84 @@ class CandyDishwasherRemainingTimeSensor(CandyBaseSensor):
     @property
     def icon(self) -> str:
         return "mdi:progress-clock"
+
+
+class CandySaltSensor(CandyBaseSensor):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
+
+    @property
+    def name(self) -> str:
+        return "Salt Level"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_SALT.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: DishwasherStatus = self.coordinator.data
+        return "on" if status.salt_empty else "off"
+
+    @property
+    def icon(self) -> str:
+        return "mdi:shaker-variant"
+
+
+class CandyRinseSensor(CandyBaseSensor):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
+
+    @property
+    def name(self) -> str:
+        return "Rinse Aid Level"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_RINSE.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: DishwasherStatus = self.coordinator.data
+        return "on" if status.rinse_aid_empty else "off"
+
+    @property
+    def icon(self) -> str:
+        return "mdi:water-opacity"
+
+class CandyDoorSensor(CandyBaseSensor, BinarySensorEntity):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
+
+    @property
+    def name(self) -> str:
+        return "Door"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_DOOR.format(self.config_id)
+
+    @property
+    def is_on(self) -> bool:
+        status: DishwasherStatus = self.coordinator.data
+        return status.door_open
+
+    @property
+    def device_class(self) -> str:
+        return "door"
+
+    @property
+    def icon(self) -> str:
+        return "mdi:door"

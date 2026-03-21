@@ -57,15 +57,20 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
         """Press the button."""
         program_select = self.hass.data[DOMAIN][self.config_id].get("program_select")
         if program_select:
-            selected_program_name = program_select.current_option
-            # Find program ID from name
-            program_id = next((k for k, v in DISHWASHER_PROGRAMS.items() if v == selected_program_name), None)
+            selected_program_key = program_select.current_option
+            # Get program ID from key mapping
+            program_id = DISHWASHER_PROGRAMS.get(selected_program_key)
             if program_id:
                 client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
                 if client:
                     payload = DEFAULT_DISHWASHER_PAYLOAD.copy()
-                    payload["Program"] = f"P{program_id}"
-                    payload["w1"] = program_id
+                    payload["Program"] = program_id
+                    # Need to extract numeric part for w1 if needed
+                    # w1 was program_id previously, now program_id is P1 etc.
+                    # Previous code used: payload["w1"] = program_id (where program_id was '1')
+                    # Now program_id is 'P1'. Need to strip 'P'.
+                    w1_val = program_id.replace("P", "")
+                    payload["w1"] = w1_val
 
                     # Get delay start
                     delay_start_entity = self.hass.states.get("input_select.delai_demarrage")

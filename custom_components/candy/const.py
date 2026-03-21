@@ -1,7 +1,7 @@
 """Constants for the Candy integration."""
 
 DOMAIN = "candy"
-PLATFORMS = ["sensor", "select", "button", "switch"]
+PLATFORMS = ["sensor", "binary_sensor", "select", "button", "switch"]
 
 DATA_KEY_COORDINATOR = "coordinator"
 DATA_KEY_CLIENT = "client"
@@ -20,6 +20,9 @@ UNIQUE_ID_OVEN = "{0}-oven"
 UNIQUE_ID_OVEN_TEMP = "{0}-oven-temp"
 UNIQUE_ID_DISHWASHER = "{0}-dishwasher"
 UNIQUE_ID_DISHWASHER_REMAINING_TIME = "{0}-dishwasher_remaining_time"
+UNIQUE_ID_DISHWASHER_SALT = "{0}-dishwasher_salt"
+UNIQUE_ID_DISHWASHER_RINSE = "{0}-dishwasher_rinse"
+UNIQUE_ID_DISHWASHER_DOOR = "{0}-dishwasher_door"
 
 UNIQUE_ID_PROGRAM_SELECT = "{0}-program_select"
 UNIQUE_ID_START_BUTTON = "{0}-start_button"
@@ -33,19 +36,19 @@ DEVICE_NAME_OVEN = "Oven"
 DEVICE_NAME_DISHWASHER = "Dishwasher"
 
 DISHWASHER_PROGRAMS = {
-    "1": "P1 (Intensif)",
-    "2": "P2 (Universel)",
-    "3": "P3 (Eco)",
-    "4": "P4 (Rapide 24')",
-    "12": "P12 (Prélavage)",
-    "19": "P19 (Rapide 39')",
+    "intensive": "P1",
+    "universal": "P2",
+    "eco": "P3",
+    "quick_24": "P4",
+    "prewash": "P12",
+    "quick_39": "P19",
 }
 
 OPTION_MAPPING = {
-    "Standard": {"OpzProg": "0", "MetaCarico": "0"},
-    "Séchage Extra": {"OpzProg": "9", "MetaCarico": "0"},
-    "Demi-charge": {"OpzProg": "0", "MetaCarico": "1"},
-    "Eco": {"OpzProg": "12", "MetaCarico": "0"},
+    "standard": {"OpzProg": "0", "MetaCarico": "0"},
+    "extra_dry": {"OpzProg": "9", "MetaCarico": "0"},
+    "half_load": {"OpzProg": "0", "MetaCarico": "1"},
+    "eco": {"OpzProg": "12", "MetaCarico": "0"},
 }
 SELECT_OPTION_ID = "select.candy_dishwasher_option"
 

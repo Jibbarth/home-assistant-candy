@@ -26,5 +26,6 @@ class CandyOptionSelect(SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        self._attr_current_option = option
-        self.async_write_ha_state()
+        if option in OPTION_MAPPING:
+            self._attr_current_option = option
+            self.async_write_ha_state()
