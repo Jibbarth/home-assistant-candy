@@ -1,7 +1,7 @@
 """Constants for the Candy integration."""
 
 DOMAIN = "candy"
-PLATFORMS = ["sensor", "select", "button"]
+PLATFORMS = ["sensor", "select", "button", "switch"]
 
 DATA_KEY_COORDINATOR = "coordinator"
 DATA_KEY_CLIENT = "client"
@@ -25,6 +25,7 @@ UNIQUE_ID_PROGRAM_SELECT = "{0}-program_select"
 UNIQUE_ID_START_BUTTON = "{0}-start_button"
 UNIQUE_ID_PAUSE_BUTTON = "{0}-pause_button"
 UNIQUE_ID_STOP_BUTTON = "{0}-stop_button"
+SWITCH_TREINUNO_ID = "{0}-switch_3in1"
 
 DEVICE_NAME_WASHING_MACHINE = "Washing machine"
 DEVICE_NAME_TUMBLE_DRYER = "Tumble dryer"
@@ -40,8 +41,30 @@ DISHWASHER_PROGRAMS = {
     "19": "P19 (Rapide 39')",
 }
 
+OPTION_MAPPING = {
+    "Standard": {"OpzProg": "0", "MetaCarico": "0"},
+    "Séchage Extra": {"OpzProg": "9", "MetaCarico": "0"},
+    "Demi-charge": {"OpzProg": "0", "MetaCarico": "1"},
+    "Eco": {"OpzProg": "12", "MetaCarico": "0"},
+}
+SELECT_OPTION_ID = "select.candy_dishwasher_option"
+
 RESET_PAYLOAD = {"Reset": "1"}
 PAUSE_PAYLOAD = {"StartStop": "0"}
+
+DELAY_MAPPING = {
+    "0 min": "0",
+    "30 min": "30",
+    "1h": "60",
+    "2h": "120",
+    "3h": "180",
+    "4h": "240",
+    "5h": "300",
+    "6h": "360",
+    "7h": "420",
+    "8h": "480",
+    "9h": "540",
+}
 
 SUGGESTED_AREA_BATHROOM = "Bathroom"
 SUGGESTED_AREA_KITCHEN = "Kitchen"

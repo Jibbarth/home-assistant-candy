@@ -11,11 +11,15 @@ from .const import (
     UNIQUE_ID_START_BUTTON,
     UNIQUE_ID_PAUSE_BUTTON,
     UNIQUE_ID_STOP_BUTTON,
+    SWITCH_TREINUNO_ID,
     DEVICE_NAME_DISHWASHER,
     DISHWASHER_PROGRAMS,
+    OPTION_MAPPING,
+    SELECT_OPTION_ID,
     DEFAULT_DISHWASHER_PAYLOAD,
     RESET_PAYLOAD,
     PAUSE_PAYLOAD,
+    DELAY_MAPPING,
 )
 from .client.model import DishwasherStatus
 
@@ -62,6 +66,25 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
                     payload = DEFAULT_DISHWASHER_PAYLOAD.copy()
                     payload["Program"] = f"P{program_id}"
                     payload["w1"] = program_id
+
+                    # Get delay start
+                    delay_start_entity = self.hass.states.get("input_select.delai_demarrage")
+                    delay_value = "0"
+                    if delay_start_entity:
+                        delay_value = DELAY_MAPPING.get(delay_start_entity.state, "0")
+                    payload["DelayStart"] = delay_value
+
+                    # Get 3-en-1 status
+                    switch_3in1_entity_id = f"switch.{SWITCH_TREINUNO_ID.format(self.config_id)}"
+                    switch_3in1_state = self.hass.states.get(switch_3in1_entity_id)
+                    payload["TreinUno"] = "1" if switch_3in1_state and switch_3in1_state.state == "on" else "0"
+
+                    # Get dishwasher options
+                    option_select_state = self.hass.states.get(SELECT_OPTION_ID)
+                    if option_select_state and option_select_state.state in OPTION_MAPPING:
+                        option_values = OPTION_MAPPING[option_select_state.state]
+                        payload.update(option_values)
+
                     await client.write(payload)
 
 class CandyPauseButton(CoordinatorEntity, ButtonEntity):
