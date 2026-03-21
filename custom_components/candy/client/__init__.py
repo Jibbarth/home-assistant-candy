@@ -9,6 +9,7 @@ from aiohttp import ClientSession
 
 from aiolimiter import AsyncLimiter
 from homeassistant.helpers.update_coordinator import UpdateFailed
+from .exceptions import UpdateFailed
 
 from .decryption import xor_data, Encryption, find_key
 from .model import (DishwasherStatus, OvenStatus, TumbleDryerStatus,

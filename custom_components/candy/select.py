@@ -198,11 +198,13 @@ class CandyOptionSelect(CoordinatorEntity, SelectEntity):
         if self.coordinator.data:
             opz_prog = str(self.coordinator.data.opz_prog)
             meta_carico = str(self.coordinator.data.meta_carico)
-            
+
             for name, mapping in OPTION_MAPPING.items():
                 if mapping["OpzProg"] == opz_prog and mapping["MetaCarico"] == meta_carico:
                     self._attr_current_option = name
                     break
+            else:
+            self._attr_current_option = "standard" # Fallback to default if data is missing
 
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""

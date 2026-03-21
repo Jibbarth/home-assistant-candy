@@ -58,6 +58,7 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         """Press the button."""
+import entity_registry as er
         ent_reg = er.async_get(self.hass)
 
         program_entity_id = ent_reg.async_get_entity_id("select", DOMAIN, UNIQUE_ID_PROGRAM_SELECT.format(self.config_id))

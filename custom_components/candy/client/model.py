@@ -160,9 +160,9 @@ class DishwasherStatus:
             remote_control=json["StatoWiFi"] == "1",
             salt_empty=json["MissSalt"] == "1",
             rinse_aid_empty=json["MissRinse"] == "1",
-            trein_uno=json["TreinUno"] == "1" if "TreinUno" in json else None,
-            opz_prog=int(json["OpzProg"]) if "OpzProg" in json else 0,
-            meta_carico=int(json["MetaCarico"]) if "MetaCarico" in json else 0
+            trein_uno=json.get("TreinUno", "0") == "1",
+            opz_prog=int(json.get("OpzProg", 0)),
+            meta_carico=int(json.get("MetaCarico", 0))
         )
 
     @staticmethod
