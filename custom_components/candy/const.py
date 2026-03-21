@@ -4,6 +4,7 @@ DOMAIN = "candy"
 PLATFORMS = ["sensor", "select", "button"]
 
 DATA_KEY_COORDINATOR = "coordinator"
+DATA_KEY_CLIENT = "client"
 
 CONF_INTEGRATION_TITLE = "Candy"
 CONF_KEY_USE_ENCRYPTION = "use_encryption"

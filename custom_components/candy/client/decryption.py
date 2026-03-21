@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 import json
 import logging
@@ -43,7 +45,7 @@ def find_key(encrypted_response: bytes) -> Optional[str]:
     return None
 
 
-def xor_data(key: bytes, data: bytes) -> bytes:
+def xor_data(key: bytes | tuple[int, ...], data: bytes) -> bytes:
     key_len = len(key)
     decrypted: list[int] = []
     for (i, byte) in enumerate(data):

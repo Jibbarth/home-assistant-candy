@@ -37,6 +37,7 @@ class CandyClient:
     async def status(self) -> Union[WashingMachineStatus, TumbleDryerStatus, DishwasherStatus, OvenStatus]:
         url = _status_url(self.device_ip, self.use_encryption)
         async with _LIMITER, self.session.get(url) as resp:
+            resp.raise_for_status()
             if self.use_encryption:
                 resp_hex = await resp.text()  # Response is hex encoded, either encrypted or not
                 if self.encryption_key != "":
@@ -63,6 +64,8 @@ class CandyClient:
 
             return status
 
+    @backoff.on_exception(backoff.expo, aiohttp.ClientError, max_tries=10, logger=__name__)
+    @backoff.on_exception(backoff.expo, TimeoutError, max_tries=10, logger=__name__)
     async def write(self, command: str):
         data = f"Write=1&{command}"
         if self.use_encryption:
@@ -76,6 +79,7 @@ class CandyClient:
 
         url = f"http://{self.device_ip}/http-write.json?encrypted={1 if self.use_encryption else 0}&data={hex_data}"
         async with _LIMITER, self.session.get(url) as resp:
+            resp.raise_for_status()
             _LOGGER.debug("Write response: %s", await resp.text())
 
 
@@ -85,6 +89,7 @@ async def detect_encryption(session: aiohttp.ClientSession, device_ip: str) -> T
         _LOGGER.info("Trying to get a response without encryption (encrypted=0)...")
         url = _status_url(device_ip, use_encryption=False)
         async with _LIMITER, session.get(url) as resp:
+            resp.raise_for_status()
             resp_json = await resp.json(content_type="text/html")
             assert resp_json.get("response") != "BAD REQUEST"
             _LOGGER.info("Received unencrypted JSON response, no need to use key for decryption")
@@ -94,6 +99,7 @@ async def detect_encryption(session: aiohttp.ClientSession, device_ip: str) -> T
         _LOGGER.info("Failed to get a valid response without encryption, let's try with encrypted=1...")
         url = _status_url(device_ip, use_encryption=True)
         async with _LIMITER, session.get(url) as resp:
+            resp.raise_for_status()
             resp_hex = await resp.text()  # Response is hex encoded encrypted data
             try:
                 json.loads(bytes.fromhex(resp_hex))
