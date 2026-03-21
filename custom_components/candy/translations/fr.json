@@ -34,7 +34,7 @@
         "select": {
             "program": {
                 "name": "Programme",
-                "state": {
+                "options": {
                     "intensive": "Intensif (75°C)",
                     "universal": "Universel (60°C)",
                     "eco": "Eco (45°C)",
@@ -45,7 +45,7 @@
             },
             "candy_dishwasher_option": {
                 "name": "Option",
-                "state": {
+                "options": {
                     "standard": "Standard",
                     "extra_dry": "Séchage Extra",
                     "half_load": "Demi-charge",
