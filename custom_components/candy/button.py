@@ -1,6 +1,7 @@
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -56,12 +57,11 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         """Press the button."""
-        program_entity_id = f"select.candy_dishwasher_program_{self.config_id.replace('-', '_')}"
-        delay_entity_id = f"select.candy_dishwasher_delay_start_{self.config_id.replace('-', '_')}"
-        switch_3in1_entity_id = f"switch.candy_dishwasher_3_in_1_{self.config_id.replace('-', '_')}"
-        
-        # Note: The actual entity IDs in HA might differ slightly depending on name -> ID conversion.
-        # This assumes standard slugify behavior.
+        ent_reg = er.async_get(self.hass)
+
+        program_entity_id = ent_reg.async_get_entity_id("select", DOMAIN, UNIQUE_ID_PROGRAM_SELECT.format(self.config_id))
+        delay_entity_id = ent_reg.async_get_entity_id("select", DOMAIN, UNIQUE_ID_DELAY_SELECT.format(self.config_id))
+        switch_3in1_entity_id = ent_reg.async_get_entity_id("switch", DOMAIN, SWITCH_TREINUNO_ID.format(self.config_id))
 
         client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
         if not client:
@@ -70,21 +70,24 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
         payload = DEFAULT_DISHWASHER_PAYLOAD.copy()
 
         # Program
-        program_state = self.hass.states.get(program_entity_id)
-        if program_state:
-            program_id = DISHWASHER_PROGRAMS.get(program_state.state)
-            if program_id:
-                payload["Program"] = program_id
-                payload["w1"] = program_id.replace("P", "")
+        if program_entity_id:
+            program_state = self.hass.states.get(program_entity_id)
+            if program_state:
+                program_id = DISHWASHER_PROGRAMS.get(program_state.state)
+                if program_id:
+                    payload["Program"] = program_id
+                    payload["w1"] = program_id.replace("P", "")
 
         # Delay
-        delay_state = self.hass.states.get(delay_entity_id)
-        if delay_state:
-            payload["DelayStart"] = DELAY_MAPPING.get(delay_state.state, "0")
+        if delay_entity_id:
+            delay_state = self.hass.states.get(delay_entity_id)
+            if delay_state:
+                payload["DelayStart"] = DELAY_MAPPING.get(delay_state.state, "0")
 
         # 3-in-1
-        switch_state = self.hass.states.get(switch_3in1_entity_id)
-        payload["TreinUno"] = "1" if switch_state and switch_state.state == "on" else "0"
+        if switch_3in1_entity_id:
+            switch_state = self.hass.states.get(switch_3in1_entity_id)
+            payload["TreinUno"] = "1" if switch_state and switch_state.state == "on" else "0"
 
         await client.write(payload)
 
