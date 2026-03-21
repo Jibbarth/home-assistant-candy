@@ -4,25 +4,18 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, DATA_KEY_COORDINATOR, UNIQUE_ID_START_BUTTON
-
-PROGRAMS = {
-    "P1 (Intensif)": "1",
-    "P2 (Universel)": "2",
-    "P3 (Eco)": "3",
-    "P4 (Rapide 24')": "4",
-    "P12 (Prélavage)": "12",
-    "P19 (Rapide 39')": "19",
-}
+from .const import DOMAIN, DATA_KEY_COORDINATOR, UNIQUE_ID_START_BUTTON, DEVICE_NAME_DISHWASHER, DISHWASHER_PROGRAMS
+from .client.model import DishwasherStatus
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities):
     """Set up the Candy start button."""
     config_id = config_entry.entry_id
     coordinator = hass.data[DOMAIN][config_id][DATA_KEY_COORDINATOR]
 
-    async_add_entities([
-        CandyStartButton(coordinator, config_id, hass)
-    ])
+    if isinstance(coordinator.data, DishwasherStatus):
+        async_add_entities([
+            CandyStartButton(coordinator, config_id, hass)
+        ])
 
 class CandyStartButton(CoordinatorEntity, ButtonEntity):
     """Candy start button entity."""
@@ -38,17 +31,21 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
             identifiers={(DOMAIN, self.config_id)},
-            name="Candy",
+            name=DEVICE_NAME_DISHWASHER,
             manufacturer="Candy",
         )
 
     async def async_press(self) -> None:
         """Press the button."""
         # Get select entity from hass.data
-        select = self.hass.data[DOMAIN][self.config_id].get("program_select")
-        if select and select.current_option:
-            program_id = PROGRAMS.get(select.current_option)
-            if program_id:
-                client = self.hass.data[DOMAIN][self.config_id].get("client")
-                if client:
-                    await client.write(f"StSt=1&PrNm={program_id}")
+        select_entity = self.hass.data[DOMAIN][self.config_id].get("program_select")
+        if select_entity and select_entity.entity_id:
+            state = self.hass.states.get(select_entity.entity_id)
+            if state:
+                selected_program_name = state.state
+                # Find program ID from name
+                program_id = next((k for k, v in DISHWASHER_PROGRAMS.items() if v == selected_program_name), None)
+                if program_id:
+                    client = self.hass.data[DOMAIN][self.config_id].get("client")
+                    if client:
+                        await client.write(f"StSt=1&PrNm={program_id}")

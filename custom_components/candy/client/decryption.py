@@ -34,7 +34,7 @@ def find_key(encrypted_response: bytes) -> Optional[str]:
     _LOGGER.info("%d keys to test", number_of_keys)
 
     for key in itertools.product(*candidate_key_codepoints):
-        decrypted = decrypt(key, encrypted_response)
+        decrypted = xor_data(key, encrypted_response)
         if _is_valid_json(decrypted):
             key_str = "".join(chr(point) for point in key)
             _LOGGER.info("Potential key found: %s", key_str)
@@ -43,10 +43,10 @@ def find_key(encrypted_response: bytes) -> Optional[str]:
     return None
 
 
-def decrypt(key: bytes, encrypted_response: bytes) -> bytes:
+def xor_data(key: bytes, data: bytes) -> bytes:
     key_len = len(key)
     decrypted: list[int] = []
-    for (i, byte) in enumerate(encrypted_response):
+    for (i, byte) in enumerate(data):
         decrypted.append(byte ^ key[i % key_len])
     return bytes(decrypted)
 

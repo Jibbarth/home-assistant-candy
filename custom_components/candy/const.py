@@ -28,5 +28,14 @@ DEVICE_NAME_TUMBLE_DRYER = "Tumble dryer"
 DEVICE_NAME_OVEN = "Oven"
 DEVICE_NAME_DISHWASHER = "Dishwasher"
 
+DISHWASHER_PROGRAMS = {
+    "1": "P1 (Intensif)",
+    "2": "P2 (Universel)",
+    "3": "P3 (Eco)",
+    "4": "P4 (Rapide 24')",
+    "12": "P12 (Prélavage)",
+    "19": "P19 (Rapide 39')",
+}
+
 SUGGESTED_AREA_BATHROOM = "Bathroom"
 SUGGESTED_AREA_KITCHEN = "Kitchen"

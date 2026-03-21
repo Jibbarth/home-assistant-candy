@@ -9,7 +9,7 @@ from aiohttp import ClientSession
 
 from aiolimiter import AsyncLimiter
 
-from .decryption import decrypt, Encryption, find_key
+from .decryption import xor_data, Encryption, find_key
 from .model import (DishwasherStatus, OvenStatus, TumbleDryerStatus,
                     WashingMachineStatus)
 
@@ -40,7 +40,7 @@ class CandyClient:
             if self.use_encryption:
                 resp_hex = await resp.text()  # Response is hex encoded, either encrypted or not
                 if self.encryption_key != "":
-                    decrypted_text = decrypt(self.encryption_key.encode(), bytes.fromhex(resp_hex))
+                    decrypted_text = xor_data(self.encryption_key.encode(), bytes.fromhex(resp_hex))
                 else:
                     # Response is just hex encoded without encryption (details in detect_encryption())
                     decrypted_text = bytes.fromhex(resp_hex)
@@ -67,7 +67,7 @@ class CandyClient:
         data = f"Write=1&{command}"
         if self.use_encryption:
             if self.encryption_key != "":
-                encrypted_bytes = decrypt(self.encryption_key.encode(), data.encode())
+                encrypted_bytes = xor_data(self.encryption_key.encode(), data.encode())
             else:
                 encrypted_bytes = data.encode()
             hex_data = encrypted_bytes.hex()
