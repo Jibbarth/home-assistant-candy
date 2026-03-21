@@ -37,15 +37,13 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         """Press the button."""
-        # Get select entity from hass.data
-        select_entity = self.hass.data[DOMAIN][self.config_id].get("program_select")
-        if select_entity and select_entity.entity_id:
-            state = self.hass.states.get(select_entity.entity_id)
-            if state:
-                selected_program_name = state.state
-                # Find program ID from name
-                program_id = next((k for k, v in DISHWASHER_PROGRAMS.items() if v == selected_program_name), None)
-                if program_id:
-                    client = self.hass.data[DOMAIN][self.config_id].get("client")
-                    if client:
-                        await client.write(f"StSt=1&PrNm={program_id}")
+        # Get selected program from state machine instead of direct object reference
+        state = self.hass.states.get("select.candy_dishwasher_program")
+        if state:
+            selected_program_name = state.state
+            # Find program ID from name
+            program_id = next((k for k, v in DISHWASHER_PROGRAMS.items() if v == selected_program_name), None)
+            if program_id:
+                client = self.hass.data[DOMAIN][self.config_id].get("client")
+                if client:
+                    await client.write(f"StSt=1&PrNm={program_id}")

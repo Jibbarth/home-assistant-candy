@@ -31,6 +31,15 @@ class CandyProgramSelect(CoordinatorEntity, SelectEntity):
         self._attr_current_option = self._attr_options[2] # P3 (Eco) as default
 
     @property
+    def current_option(self) -> str | None:
+        """Return the current selected option."""
+        if self.coordinator.data and hasattr(self.coordinator.data, "program"):
+            program_id = self.coordinator.data.program
+            if program_id in DISHWASHER_PROGRAMS:
+                return DISHWASHER_PROGRAMS[program_id]
+        return self._attr_current_option
+
+    @property
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
             identifiers={(DOMAIN, self.config_id)},
