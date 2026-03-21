@@ -63,6 +63,21 @@ class CandyClient:
 
             return status
 
+    async def write(self, command: str):
+        data = f"Write=1&{command}"
+        if self.use_encryption:
+            if self.encryption_key != "":
+                encrypted_bytes = decrypt(self.encryption_key.encode(), data.encode())
+            else:
+                encrypted_bytes = data.encode()
+            hex_data = encrypted_bytes.hex()
+        else:
+            hex_data = data.encode().hex()
+
+        url = f"http://{self.device_ip}/http-write.json?encrypted={1 if self.use_encryption else 0}&data={hex_data}"
+        async with _LIMITER, self.session.get(url) as resp:
+            _LOGGER.debug("Write response: %s", await resp.text())
+
 
 async def detect_encryption(session: aiohttp.ClientSession, device_ip: str) -> Tuple[Encryption, Optional[str]]:
     # noinspection PyBroadException
