@@ -143,6 +143,9 @@ class DishwasherStatus:
     remote_control: bool
     salt_empty: bool
     rinse_aid_empty: bool
+    trein_uno: Optional[bool]
+    opz_prog: int
+    meta_carico: int
 
     @classmethod
     def from_json(cls, json):
@@ -156,7 +159,10 @@ class DishwasherStatus:
             eco_mode=json["Eco"] != "0",
             remote_control=json["StatoWiFi"] == "1",
             salt_empty=json["MissSalt"] == "1",
-            rinse_aid_empty=json["MissRinse"] == "1"
+            rinse_aid_empty=json["MissRinse"] == "1",
+            trein_uno=json["TreinUno"] == "1" if "TreinUno" in json else None,
+            opz_prog=int(json["OpzProg"]) if "OpzProg" in json else 0,
+            meta_carico=int(json["MetaCarico"]) if "MetaCarico" in json else 0
         )
 
     @staticmethod
@@ -165,7 +171,7 @@ class DishwasherStatus:
         Parse final program label, like P1, P1+, P1-
         """
         program = json["Program"]
-        # Some dishwashers don't include the OpzProg field
+        # Some dishwashers don't include the OpzProg or MetaCarico fields
         option = json.get("OpzProg")
         if option == "p":
             return program + "+"

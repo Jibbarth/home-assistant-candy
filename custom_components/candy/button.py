@@ -14,6 +14,7 @@ from .const import (
     UNIQUE_ID_STOP_BUTTON,
     UNIQUE_ID_PROGRAM_SELECT,
     UNIQUE_ID_DELAY_SELECT,
+    UNIQUE_ID_OPTION_SELECT,
     SWITCH_TREINUNO_ID,
     DEVICE_NAME_DISHWASHER,
     DISHWASHER_PROGRAMS,
@@ -61,6 +62,7 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
 
         program_entity_id = ent_reg.async_get_entity_id("select", DOMAIN, UNIQUE_ID_PROGRAM_SELECT.format(self.config_id))
         delay_entity_id = ent_reg.async_get_entity_id("select", DOMAIN, UNIQUE_ID_DELAY_SELECT.format(self.config_id))
+        option_entity_id = ent_reg.async_get_entity_id("select", DOMAIN, UNIQUE_ID_OPTION_SELECT.format(self.config_id))
         switch_3in1_entity_id = ent_reg.async_get_entity_id("switch", DOMAIN, SWITCH_TREINUNO_ID.format(self.config_id))
 
         client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
@@ -83,6 +85,14 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
             delay_state = self.hass.states.get(delay_entity_id)
             if delay_state:
                 payload["DelayStart"] = DELAY_MAPPING.get(delay_state.state, "0")
+
+        # Option
+        if option_entity_id:
+            option_state = self.hass.states.get(option_entity_id)
+            if option_state and option_state.state in OPTION_MAPPING:
+                mapping = OPTION_MAPPING[option_state.state]
+                payload["OpzProg"] = mapping["OpzProg"]
+                payload["MetaCarico"] = mapping["MetaCarico"]
 
         # 3-in-1
         if switch_3in1_entity_id:

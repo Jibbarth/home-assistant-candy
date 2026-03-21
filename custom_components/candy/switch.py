@@ -41,7 +41,7 @@ class Candy3In1Switch(CoordinatorEntity, SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return True if the switch is on."""
-        return self.coordinator.data.TreinUno == "1"
+        return getattr(self.coordinator.data, "trein_uno", False) or False
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""

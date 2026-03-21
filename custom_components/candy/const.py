@@ -26,6 +26,7 @@ UNIQUE_ID_DISHWASHER_DOOR = "{0}-dishwasher_door"
 
 UNIQUE_ID_PROGRAM_SELECT = "{0}-program_select"
 UNIQUE_ID_DELAY_SELECT = "{0}-delay_select"
+UNIQUE_ID_OPTION_SELECT = "{0}-option_select"
 UNIQUE_ID_START_BUTTON = "{0}-start_button"
 UNIQUE_ID_PAUSE_BUTTON = "{0}-pause_button"
 UNIQUE_ID_STOP_BUTTON = "{0}-stop_button"
@@ -51,23 +52,60 @@ OPTION_MAPPING = {
     "half_load": {"OpzProg": "0", "MetaCarico": "1"},
     "eco": {"OpzProg": "12", "MetaCarico": "0"},
 }
-SELECT_OPTION_ID = "select.candy_dishwasher_option"
 
 RESET_PAYLOAD = {"Reset": "1"}
 PAUSE_PAYLOAD = {"StartStop": "0"}
 
 DELAY_MAPPING = {
     "0 min": "0",
-    "30 min": "30",
-    "1h": "60",
-    "2h": "120",
-    "3h": "180",
-    "4h": "240",
-    "5h": "300",
-    "6h": "360",
-    "7h": "420",
-    "8h": "480",
-    "9h": "540",
+    "30 min": "1",
+    "1h": "2",
+    "1h 30m": "3",
+    "2h": "4",
+    "2h 30m": "5",
+    "3h": "6",
+    "3h 30m": "7",
+    "4h": "8",
+    "4h 30m": "9",
+    "5h": "10",
+    "5h 30m": "11",
+    "6h": "12",
+    "6h 30m": "13",
+    "7h": "14",
+    "7h 30m": "15",
+    "8h": "16",
+    "8h 30m": "17",
+    "9h": "18",
+    "9h 30m": "19",
+    "10h": "20",
+    "10h 30m": "21",
+    "11h": "22",
+    "11h 30m": "23",
+    "12h": "24",
+    "12h 30m": "25",
+    "13h": "26",
+    "13h 30m": "27",
+    "14h": "28",
+    "14h 30m": "29",
+    "15h": "30",
+    "15h 30m": "31",
+    "16h": "32",
+    "16h 30m": "33",
+    "17h": "34",
+    "17h 30m": "35",
+    "18h": "36",
+    "18h 30m": "37",
+    "19h": "38",
+    "19h 30m": "39",
+    "20h": "40",
+    "20h 30m": "41",
+    "21h": "42",
+    "21h 30m": "43",
+    "22h": "44",
+    "22h 30m": "45",
+    "23h": "46",
+    "23h 30m": "47",
+    "24h": "48",
 }
 
 SUGGESTED_AREA_BATHROOM = "Bathroom"
