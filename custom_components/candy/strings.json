@@ -49,13 +49,39 @@
         "name": "Remaining time"
       },
       "program_status": {
-        "name": "Program"
+        "name": "Program",
+        "state": {
+          "P1": "Intensive (75°C)",
+          "P1+": "Intensive (75°C) +",
+          "P1-": "Intensive (75°C) -",
+          "P2": "Universal (60°C)",
+          "P2+": "Universal (60°C) +",
+          "P2-": "Universal (60°C) -",
+          "P3": "Eco (45°C)",
+          "P3+": "Eco (45°C) +",
+          "P3-": "Eco (45°C) -",
+          "P4": "Quick 24'",
+          "P4+": "Quick 24' +",
+          "P4-": "Quick 24' -",
+          "P12": "Prewash",
+          "P12+": "Prewash +",
+          "P12-": "Prewash -",
+          "P19": "Quick 39'",
+          "P19+": "Quick 39' +",
+          "P19-": "Quick 39' -"
+        }
       },
       "delay_status": {
         "name": "Delay"
       },
       "option_status": {
-        "name": "Option"
+        "name": "Option",
+        "state": {
+          "standard": "Standard",
+          "extra_dry": "Extra dry",
+          "half_load": "Half load",
+          "eco": "Eco"
+        }
       },
       "dishwasher_3in1_status": {
         "name": "3-in-1"
