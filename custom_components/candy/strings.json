@@ -16,5 +16,76 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     }
+  },
+  "entity": {
+    "button": {
+      "start": {
+        "name": "Start"
+      },
+      "pause": {
+        "name": "Pause"
+      },
+      "stop": {
+        "name": "Stop"
+      }
+    },
+    "binary_sensor": {
+      "door_sensor": {
+        "name": "Door"
+      }
+    },
+    "sensor": {
+      "remaining_time": {
+        "name": "Remaining time"
+      },
+      "program_status": {
+        "name": "Program"
+      },
+      "delay_status": {
+        "name": "Delay"
+      },
+      "option_status": {
+        "name": "Option"
+      },
+      "dishwasher_3in1_status": {
+        "name": "3-in-1"
+      },
+      "salt_level": {
+        "name": "Salt level"
+      },
+      "rinse_aid_level": {
+        "name": "Rinse aid level"
+      }
+    },
+    "select": {
+      "delay_start": {
+        "name": "Delay start"
+      },
+      "program": {
+        "name": "Program",
+        "options": {
+          "intensive": "Intensive (75°C)",
+          "universal": "Universal (60°C)",
+          "eco": "Eco (45°C)",
+          "quick_24": "Quick 24'",
+          "prewash": "Prewash",
+          "quick_39": "Quick 39'"
+        }
+      },
+      "candy_dishwasher_option": {
+        "name": "Option",
+        "options": {
+          "standard": "Standard",
+          "extra_dry": "Extra dry",
+          "half_load": "Half load",
+          "eco": "Eco"
+        }
+      }
+    },
+    "switch": {
+      "dishwasher_3in1": {
+        "name": "3-in-1"
+      }
+    }
   }
 }

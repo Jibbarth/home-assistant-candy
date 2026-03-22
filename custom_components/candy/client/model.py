@@ -144,8 +144,9 @@ class DishwasherStatus:
     salt_empty: bool
     rinse_aid_empty: bool
     trein_uno: Optional[bool]
-    opz_prog: int
-    meta_carico: int
+    opz_prog: str
+    meta_carico: str
+    raw_response: dict
 
     @classmethod
     def from_json(cls, json):
@@ -161,8 +162,9 @@ class DishwasherStatus:
             salt_empty=json["MissSalt"] == "1",
             rinse_aid_empty=json["MissRinse"] == "1",
             trein_uno=json.get("TreinUno", "0") == "1",
-            opz_prog=int(json.get("OpzProg", 0)),
-            meta_carico=int(json.get("MetaCarico", 0))
+            opz_prog=str(json.get("OpzProg", "0")),
+            meta_carico=str(json.get("MetaCarico", "0")),
+            raw_response=dict(json),
         )
 
     @staticmethod

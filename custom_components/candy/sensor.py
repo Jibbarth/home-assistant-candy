@@ -17,7 +17,36 @@ from .client import WashingMachineStatus
 from .client.model import (DishwasherState, DishwasherStatus,
                            DryerProgramState, MachineState, OvenStatus,
                            TumbleDryerStatus)
-from .const import *
+from .const import (
+    DATA_KEY_COORDINATOR,
+    DATA_KEY_DEVICE_CODE,
+    DELAY_MAPPING,
+    DEVICE_NAME_DISHWASHER,
+    DEVICE_NAME_OVEN,
+    DEVICE_NAME_TUMBLE_DRYER,
+    DEVICE_NAME_WASHING_MACHINE,
+    DOMAIN,
+    OPTION_MAPPING,
+    SUGGESTED_AREA_BATHROOM,
+    SUGGESTED_AREA_KITCHEN,
+    UNIQUE_ID_DISHWASHER,
+    UNIQUE_ID_DISHWASHER_3IN1,
+    UNIQUE_ID_DISHWASHER_DELAY,
+    UNIQUE_ID_DISHWASHER_DOOR,
+    UNIQUE_ID_DISHWASHER_OPTION,
+    UNIQUE_ID_DISHWASHER_PROGRAM,
+    UNIQUE_ID_DISHWASHER_REMAINING_TIME,
+    UNIQUE_ID_DISHWASHER_RINSE,
+    UNIQUE_ID_DISHWASHER_SALT,
+    UNIQUE_ID_OVEN,
+    UNIQUE_ID_OVEN_TEMP,
+    UNIQUE_ID_TUMBLE_CYCLE_STATUS,
+    UNIQUE_ID_TUMBLE_DRYER,
+    UNIQUE_ID_TUMBLE_REMAINING_TIME,
+    UNIQUE_ID_WASH_CYCLE_STATUS,
+    UNIQUE_ID_WASHING_MACHINE,
+    UNIQUE_ID_WASH_REMAINING_TIME,
+)
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities):
@@ -25,39 +54,45 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     config_id = config_entry.entry_id
     coordinator = hass.data[DOMAIN][config_id][DATA_KEY_COORDINATOR]
+    device_code = hass.data[DOMAIN][config_id][DATA_KEY_DEVICE_CODE]
 
     if isinstance(coordinator.data, WashingMachineStatus):
         async_add_entities([
-            CandyWashingMachineSensor(coordinator, config_id),
-            CandyWashCycleStatusSensor(coordinator, config_id),
-            CandyWashRemainingTimeSensor(coordinator, config_id)
+            CandyWashingMachineSensor(coordinator, config_id, device_code),
+            CandyWashCycleStatusSensor(coordinator, config_id, device_code),
+            CandyWashRemainingTimeSensor(coordinator, config_id, device_code)
         ])
     elif isinstance(coordinator.data, TumbleDryerStatus):
         async_add_entities([
-            CandyTumbleDryerSensor(coordinator, config_id),
-            CandyTumbleStatusSensor(coordinator, config_id),
-            CandyTumbleRemainingTimeSensor(coordinator, config_id)
+            CandyTumbleDryerSensor(coordinator, config_id, device_code),
+            CandyTumbleStatusSensor(coordinator, config_id, device_code),
+            CandyTumbleRemainingTimeSensor(coordinator, config_id, device_code)
         ])
     elif isinstance(coordinator.data, OvenStatus):
         async_add_entities([
-            CandyOvenSensor(coordinator, config_id),
-            CandyOvenTempSensor(coordinator, config_id)
+            CandyOvenSensor(coordinator, config_id, device_code),
+            CandyOvenTempSensor(coordinator, config_id, device_code)
         ])
     elif isinstance(coordinator.data, DishwasherStatus):
         async_add_entities([
-            CandyDishwasherSensor(coordinator, config_id),
-            CandyDishwasherRemainingTimeSensor(coordinator, config_id),
-            CandySaltSensor(coordinator, config_id),
-            CandyRinseSensor(coordinator, config_id)
+            CandyDishwasherSensor(coordinator, config_id, device_code),
+            CandyDishwasherRemainingTimeSensor(coordinator, config_id, device_code),
+            CandyDishwasherProgramSensor(coordinator, config_id, device_code),
+            CandyDishwasherDelaySensor(coordinator, config_id, device_code),
+            CandyDishwasherOptionSensor(coordinator, config_id, device_code),
+            CandyDishwasher3In1Sensor(coordinator, config_id, device_code),
+            CandySaltSensor(coordinator, config_id, device_code),
+            CandyRinseSensor(coordinator, config_id, device_code)
         ])
     else:
         raise Exception(f"Unable to determine machine type: {coordinator.data}")
 
 
 class CandyBaseSensor(CoordinatorEntity, SensorEntity):
-    def __init__(self, coordinator: DataUpdateCoordinator, config_id: str):
+    def __init__(self, coordinator: DataUpdateCoordinator, config_id: str, device_code: str):
         super().__init__(coordinator)
         self.config_id = config_id
+        self.device_code = device_code
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -65,6 +100,7 @@ class CandyBaseSensor(CoordinatorEntity, SensorEntity):
             identifiers={(DOMAIN, self.config_id)},
             name=self.device_name(),
             manufacturer="Candy",
+            serial_number=self.device_code,
             suggested_area=self.suggested_area(),
         )
 
@@ -408,20 +444,21 @@ class CandyDishwasherSensor(CandyBaseSensor):
         if status.delayed_start_hours is not None:
             attributes["delayed_start_hours"] = status.delayed_start_hours
 
+        attributes["raw_response"] = status.raw_response
+
         return attributes
 
 
 class CandyDishwasherRemainingTimeSensor(CandyBaseSensor):
+
+    _attr_translation_key = "remaining_time"
+    _attr_has_entity_name = True
 
     def device_name(self) -> str:
         return DEVICE_NAME_DISHWASHER
 
     def suggested_area(self) -> str:
         return SUGGESTED_AREA_KITCHEN
-
-    @property
-    def name(self) -> str:
-        return "Dishwasher remaining time"
 
     @property
     def unique_id(self) -> str:
@@ -444,7 +481,10 @@ class CandyDishwasherRemainingTimeSensor(CandyBaseSensor):
         return "mdi:progress-clock"
 
 
-class CandySaltSensor(CandyBaseSensor):
+class CandyDishwasherProgramSensor(CandyBaseSensor):
+
+    _attr_translation_key = "program_status"
+    _attr_has_entity_name = True
 
     def device_name(self) -> str:
         return DEVICE_NAME_DISHWASHER
@@ -453,8 +493,121 @@ class CandySaltSensor(CandyBaseSensor):
         return SUGGESTED_AREA_KITCHEN
 
     @property
-    def name(self) -> str:
-        return "Salt Level"
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_PROGRAM.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: DishwasherStatus = self.coordinator.data
+        return status.program
+
+    @property
+    def icon(self) -> str:
+        return "mdi:dishwasher"
+
+
+class CandyDishwasherDelaySensor(CandyBaseSensor):
+
+    _attr_translation_key = "delay_status"
+    _attr_has_entity_name = True
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_DELAY.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: DishwasherStatus = self.coordinator.data
+        value = status.delayed_start_hours
+        if value is None:
+            return "0 min"
+
+        return next((key for key, mapped in DELAY_MAPPING.items() if mapped == str(value)), str(value))
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any]:
+        status: DishwasherStatus = self.coordinator.data
+        return {
+            "raw_delay_value": 0 if status.delayed_start_hours is None else status.delayed_start_hours,
+        }
+
+    @property
+    def icon(self) -> str:
+        return "mdi:timer-cog-outline"
+
+
+class CandyDishwasherOptionSensor(CandyBaseSensor):
+
+    _attr_translation_key = "option_status"
+    _attr_has_entity_name = True
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_OPTION.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: DishwasherStatus = self.coordinator.data
+        opz_prog = str(status.opz_prog)
+        meta_carico = str(status.meta_carico)
+        for name, mapping in OPTION_MAPPING.items():
+            if mapping.get("OpzProg") == opz_prog and mapping.get("MetaCarico") == meta_carico:
+                return name
+
+        return f"{opz_prog}/{meta_carico}"
+
+    @property
+    def icon(self) -> str:
+        return "mdi:tune-variant"
+
+
+class CandyDishwasher3In1Sensor(CandyBaseSensor):
+
+    _attr_translation_key = "dishwasher_3in1_status"
+    _attr_has_entity_name = True
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_DISHWASHER_3IN1.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: DishwasherStatus = self.coordinator.data
+        return "on" if status.trein_uno else "off"
+
+    @property
+    def icon(self) -> str:
+        return "mdi:checkbox-marked-circle-outline"
+
+
+class CandySaltSensor(CandyBaseSensor):
+
+    _attr_translation_key = "salt_level"
+    _attr_has_entity_name = True
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_DISHWASHER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_KITCHEN
 
     @property
     def unique_id(self) -> str:
@@ -472,15 +625,14 @@ class CandySaltSensor(CandyBaseSensor):
 
 class CandyRinseSensor(CandyBaseSensor):
 
+    _attr_translation_key = "rinse_aid_level"
+    _attr_has_entity_name = True
+
     def device_name(self) -> str:
         return DEVICE_NAME_DISHWASHER
 
     def suggested_area(self) -> str:
         return SUGGESTED_AREA_KITCHEN
-
-    @property
-    def name(self) -> str:
-        return "Rinse Aid Level"
 
     @property
     def unique_id(self) -> str:

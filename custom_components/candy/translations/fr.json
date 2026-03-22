@@ -18,12 +18,38 @@
         }
     },
     "entity": {
+        "button": {
+            "start": {
+                "name": "Démarrer"
+            },
+            "pause": {
+                "name": "Pause"
+            },
+            "stop": {
+                "name": "Arrêter"
+            }
+        },
         "binary_sensor": {
             "door_sensor": {
                 "name": "Porte"
             }
         },
         "sensor": {
+            "remaining_time": {
+                "name": "Temps restant"
+            },
+            "program_status": {
+                "name": "Programme"
+            },
+            "delay_status": {
+                "name": "Départ différé"
+            },
+            "option_status": {
+                "name": "Option"
+            },
+            "dishwasher_3in1_status": {
+                "name": "3-en-1"
+            },
             "salt_level": {
                 "name": "Niveau de sel"
             },
@@ -32,6 +58,9 @@
             }
         },
         "select": {
+            "delay_start": {
+                "name": "Départ différé"
+            },
             "program": {
                 "name": "Programme",
                 "options": {
@@ -51,6 +80,11 @@
                     "half_load": "Demi-charge",
                     "eco": "Eco"
                 }
+            }
+        },
+        "switch": {
+            "dishwasher_3in1": {
+                "name": "3-en-1"
             }
         }
     },

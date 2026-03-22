@@ -49,7 +49,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     hass.data.setdefault(DOMAIN, {})[config_entry.entry_id] = {
         DATA_KEY_COORDINATOR: coordinator,
-        DATA_KEY_CLIENT: client
+        DATA_KEY_CLIENT: client,
+        DATA_KEY_DEVICE_CODE: config_entry.unique_id or config_entry.entry_id,
     }
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)

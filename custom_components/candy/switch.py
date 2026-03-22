@@ -2,35 +2,35 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
     DOMAIN,
     DATA_KEY_COORDINATOR,
-    DATA_KEY_CLIENT,
+    DATA_KEY_DEVICE_CODE,
     SWITCH_TREINUNO_ID,
     DEVICE_NAME_DISHWASHER,
 )
-from .client.model import DishwasherState
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities):
     """Set up the Candy switches."""
     config_id = config_entry.entry_id
     coordinator = hass.data[DOMAIN][config_id][DATA_KEY_COORDINATOR]
+    device_code = hass.data[DOMAIN][config_id][DATA_KEY_DEVICE_CODE]
 
     async_add_entities([
-        Candy3In1Switch(coordinator, config_id),
+        Candy3In1Switch(config_id, device_code),
     ])
 
-class Candy3In1Switch(CoordinatorEntity, SwitchEntity):
+class Candy3In1Switch(SwitchEntity):
     """Candy 3-in-1 switch entity."""
 
-    def __init__(self, coordinator, config_id):
-        super().__init__(coordinator)
+    def __init__(self, config_id, device_code):
         self.config_id = config_id
+        self.device_code = device_code
         self._attr_unique_id = SWITCH_TREINUNO_ID.format(config_id)
-        self._attr_name = "Candy Dishwasher 3-in-1"
-        self._attr_is_on = None
+        self._attr_translation_key = "dishwasher_3in1"
+        self._attr_has_entity_name = True
+        self._attr_is_on = False
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -38,6 +38,7 @@ class Candy3In1Switch(CoordinatorEntity, SwitchEntity):
             identifiers={(DOMAIN, self.config_id)},
             name=DEVICE_NAME_DISHWASHER,
             manufacturer="Candy",
+            serial_number=self.device_code,
         )
 
     @property
@@ -45,35 +46,12 @@ class Candy3In1Switch(CoordinatorEntity, SwitchEntity):
         """Return True if the switch is on."""
         return self._attr_is_on
 
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.data:
-            return
-
-        machine_state = getattr(self.coordinator.data, "machine_state", None)
-        is_running = machine_state != DishwasherState.IDLE
-
-        if is_running or self._attr_is_on is None:
-            self._attr_is_on = getattr(self.coordinator.data, "trein_uno", False) or False
-        
-        super()._handle_coordinator_update()
-
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
         self._attr_is_on = True
         self.async_write_ha_state()
 
-        client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
-        if client:
-            await client.write({"TreinUno": "1"})
-        await self.coordinator.async_request_refresh()
-
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
         self._attr_is_on = False
         self.async_write_ha_state()
-
-        client = self.hass.data[DOMAIN][self.config_id].get(DATA_KEY_CLIENT)
-        if client:
-            await client.write({"TreinUno": "0"})
-        await self.coordinator.async_request_refresh()

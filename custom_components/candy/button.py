@@ -9,6 +9,7 @@ from .const import (
     DOMAIN,
     DATA_KEY_COORDINATOR,
     DATA_KEY_CLIENT,
+    DATA_KEY_DEVICE_CODE,
     UNIQUE_ID_START_BUTTON,
     UNIQUE_ID_PAUSE_BUTTON,
     UNIQUE_ID_STOP_BUTTON,
@@ -30,23 +31,26 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
     """Set up the Candy buttons."""
     config_id = config_entry.entry_id
     coordinator = hass.data[DOMAIN][config_id][DATA_KEY_COORDINATOR]
+    device_code = hass.data[DOMAIN][config_id][DATA_KEY_DEVICE_CODE]
 
     if isinstance(coordinator.data, DishwasherStatus):
         async_add_entities([
-            CandyStartButton(coordinator, config_id, hass),
-            CandyPauseButton(coordinator, config_id, hass),
-            CandyStopButton(coordinator, config_id, hass),
+            CandyStartButton(coordinator, config_id, device_code, hass),
+            CandyPauseButton(coordinator, config_id, device_code, hass),
+            CandyStopButton(coordinator, config_id, device_code, hass),
         ])
 
 class CandyStartButton(CoordinatorEntity, ButtonEntity):
     """Candy start button entity."""
 
-    def __init__(self, coordinator, config_id, hass):
+    def __init__(self, coordinator, config_id, device_code, hass):
         super().__init__(coordinator)
         self.config_id = config_id
+        self.device_code = device_code
         self.hass = hass
         self._attr_unique_id = UNIQUE_ID_START_BUTTON.format(config_id)
-        self._attr_name = "Start"
+        self._attr_translation_key = "start"
+        self._attr_has_entity_name = True
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -54,6 +58,7 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
             identifiers={(DOMAIN, self.config_id)},
             name=DEVICE_NAME_DISHWASHER,
             manufacturer="Candy",
+            serial_number=self.device_code,
         )
 
     async def async_press(self) -> None:
@@ -104,12 +109,14 @@ class CandyStartButton(CoordinatorEntity, ButtonEntity):
 class CandyPauseButton(CoordinatorEntity, ButtonEntity):
     """Candy pause button entity."""
 
-    def __init__(self, coordinator, config_id, hass):
+    def __init__(self, coordinator, config_id, device_code, hass):
         super().__init__(coordinator)
         self.config_id = config_id
+        self.device_code = device_code
         self.hass = hass
         self._attr_unique_id = UNIQUE_ID_PAUSE_BUTTON.format(config_id)
-        self._attr_name = "Pause"
+        self._attr_translation_key = "pause"
+        self._attr_has_entity_name = True
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -117,6 +124,7 @@ class CandyPauseButton(CoordinatorEntity, ButtonEntity):
             identifiers={(DOMAIN, self.config_id)},
             name=DEVICE_NAME_DISHWASHER,
             manufacturer="Candy",
+            serial_number=self.device_code,
         )
 
     async def async_press(self) -> None:
@@ -128,12 +136,14 @@ class CandyPauseButton(CoordinatorEntity, ButtonEntity):
 class CandyStopButton(CoordinatorEntity, ButtonEntity):
     """Candy stop button entity."""
 
-    def __init__(self, coordinator, config_id, hass):
+    def __init__(self, coordinator, config_id, device_code, hass):
         super().__init__(coordinator)
         self.config_id = config_id
+        self.device_code = device_code
         self.hass = hass
         self._attr_unique_id = UNIQUE_ID_STOP_BUTTON.format(config_id)
-        self._attr_name = "Stop"
+        self._attr_translation_key = "stop"
+        self._attr_has_entity_name = True
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -141,6 +151,7 @@ class CandyStopButton(CoordinatorEntity, ButtonEntity):
             identifiers={(DOMAIN, self.config_id)},
             name=DEVICE_NAME_DISHWASHER,
             manufacturer="Candy",
+            serial_number=self.device_code,
         )
 
     async def async_press(self) -> None:

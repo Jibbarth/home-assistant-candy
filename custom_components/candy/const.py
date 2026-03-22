@@ -5,6 +5,7 @@ PLATFORMS = ["sensor", "binary_sensor", "select", "button", "switch"]
 
 DATA_KEY_COORDINATOR = "coordinator"
 DATA_KEY_CLIENT = "client"
+DATA_KEY_DEVICE_CODE = "device_code"
 
 CONF_INTEGRATION_TITLE = "Candy"
 CONF_KEY_USE_ENCRYPTION = "use_encryption"
@@ -23,6 +24,10 @@ UNIQUE_ID_DISHWASHER_REMAINING_TIME = "{0}-dishwasher_remaining_time"
 UNIQUE_ID_DISHWASHER_SALT = "{0}-dishwasher_salt"
 UNIQUE_ID_DISHWASHER_RINSE = "{0}-dishwasher_rinse"
 UNIQUE_ID_DISHWASHER_DOOR = "{0}-dishwasher_door"
+UNIQUE_ID_DISHWASHER_PROGRAM = "{0}-dishwasher_program"
+UNIQUE_ID_DISHWASHER_DELAY = "{0}-dishwasher_delay"
+UNIQUE_ID_DISHWASHER_OPTION = "{0}-dishwasher_option"
+UNIQUE_ID_DISHWASHER_3IN1 = "{0}-dishwasher_3in1"
 
 UNIQUE_ID_PROGRAM_SELECT = "{0}-program_select"
 UNIQUE_ID_DELAY_SELECT = "{0}-delay_select"
