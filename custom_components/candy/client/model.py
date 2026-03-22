@@ -136,7 +136,7 @@ class DishwasherStatus:
     machine_state: DishwasherState
     program: str
     remaining_minutes: int
-    delayed_start_hours: Optional[int]
+    delayed_start_minutes: Optional[int]
     door_open: bool
     door_open_allowed: Optional[bool]
     eco_mode: bool
@@ -154,7 +154,7 @@ class DishwasherStatus:
             machine_state=DishwasherState.from_code(int(json["StatoDWash"])),
             program=DishwasherStatus.parse_program(json),
             remaining_minutes=int(json["RemTime"]),
-            delayed_start_hours=int(json["DelayStart"]) if json["DelayStart"] != "0" else None,
+            delayed_start_minutes=int(json["DelayStart"]) if json["DelayStart"] != "0" else None,
             door_open=json["OpenDoor"] != "0",
             door_open_allowed=json["OpenDoorOpt"] == "1" if "OpenDoorOpt" in json else None,
             eco_mode=json["Eco"] != "0",

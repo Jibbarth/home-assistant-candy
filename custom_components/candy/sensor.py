@@ -486,8 +486,8 @@ class CandyDishwasherSensor(CandyBaseSensor):
         if status.door_open_allowed is not None:
             attributes["door_open_allowed"] = status.door_open_allowed
 
-        if status.delayed_start_hours is not None:
-            attributes["delayed_start_hours"] = status.delayed_start_hours
+        if status.delayed_start_minutes is not None:
+            attributes["delayed_start_minutes"] = status.delayed_start_minutes
 
         attributes["raw_response"] = status.raw_response
 
@@ -569,17 +569,17 @@ class CandyDishwasherDelaySensor(CandyBaseSensor):
     @property
     def state(self) -> StateType:
         status: DishwasherStatus = self.coordinator.data
-        value = status.delayed_start_hours
+        value = status.delayed_start_minutes
         if value is None:
             return "0 min"
 
-        return next((key for key, mapped in DELAY_MAPPING.items() if mapped == str(value)), str(value))
+        return f"{value} min"
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
         status: DishwasherStatus = self.coordinator.data
         return {
-            "raw_delay_value": 0 if status.delayed_start_hours is None else status.delayed_start_hours,
+            "raw_delay_value": 0 if status.delayed_start_minutes is None else status.delayed_start_minutes,
         }
 
     @property
