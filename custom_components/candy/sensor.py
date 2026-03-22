@@ -401,12 +401,45 @@ class CandyOvenTempSensor(CandyBaseSensor):
 class CandyDishwasherSensor(CandyBaseSensor):
 
     _attr_translation_key = "status"
+    _ACTIVE_STATES = (
+        DishwasherState.PRE_WASH,
+        DishwasherState.WASH,
+        DishwasherState.RINSE,
+        DishwasherState.DRYING,
+    )
+
+    def __init__(self, coordinator: DataUpdateCoordinator, config_id: str, device_code: str):
+        super().__init__(coordinator, config_id, device_code)
+        self._cycle_program: str | None = None
+        self._cycle_total_minutes = 0
+        self._update_cycle_progress(coordinator.data)
 
     def device_name(self) -> str:
         return DEVICE_NAME_DISHWASHER
 
     def suggested_area(self) -> str:
         return SUGGESTED_AREA_KITCHEN
+
+    def _is_cycle_active(self, status: DishwasherStatus) -> bool:
+        return status.machine_state in self._ACTIVE_STATES and status.remaining_minutes > 0
+
+    def _update_cycle_progress(self, status: DishwasherStatus) -> None:
+        if not self._is_cycle_active(status):
+            self._cycle_program = None
+            self._cycle_total_minutes = 0
+            return
+
+        if (
+            self._cycle_program != status.program
+            or self._cycle_total_minutes == 0
+            or status.remaining_minutes > self._cycle_total_minutes
+        ):
+            self._cycle_program = status.program
+            self._cycle_total_minutes = status.remaining_minutes
+
+    def _handle_coordinator_update(self) -> None:
+        self._update_cycle_progress(self.coordinator.data)
+        super()._handle_coordinator_update()
 
     @property
     def name(self) -> str:
@@ -428,11 +461,21 @@ class CandyDishwasherSensor(CandyBaseSensor):
     @property
     def extra_state_attributes(self) -> Mapping[str, Any]:
         status: DishwasherStatus = self.coordinator.data
+        self._update_cycle_progress(status)
+        cycle_active = self._is_cycle_active(status)
+
+        total_minutes = self._cycle_total_minutes if cycle_active else 0
+        progress_percent = 0
+        if cycle_active and total_minutes > 0:
+            elapsed_minutes = max(total_minutes - status.remaining_minutes, 0)
+            progress_percent = round((elapsed_minutes / total_minutes) * 100)
 
         attributes = {
             "program": status.program,
             "remaining_minutes": 0 if status.machine_state in
                                       [DishwasherState.IDLE, DishwasherState.FINISHED] else status.remaining_minutes,
+            "total_minutes": total_minutes,
+            "progress_percent": progress_percent,
             "remote_control": status.remote_control,
             "door_open": status.door_open,
             "eco_mode": status.eco_mode,
