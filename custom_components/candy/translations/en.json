@@ -35,6 +35,16 @@
             }
         },
         "sensor": {
+            "status": {
+                "state": {
+                    "Idle": "Idle",
+                    "Pre-wash": "Pre-wash",
+                    "Wash": "Wash",
+                    "Rinse": "Rinse",
+                    "Drying": "Drying",
+                    "Finished": "Finished"
+                }
+            },
             "remaining_time": {
                 "name": "Remaining time"
             },

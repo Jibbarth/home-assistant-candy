@@ -400,6 +400,8 @@ class CandyOvenTempSensor(CandyBaseSensor):
 
 class CandyDishwasherSensor(CandyBaseSensor):
 
+    _attr_translation_key = "status"
+
     def device_name(self) -> str:
         return DEVICE_NAME_DISHWASHER
 

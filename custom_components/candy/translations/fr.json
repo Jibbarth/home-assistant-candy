@@ -35,6 +35,16 @@
             }
         },
         "sensor": {
+            "status": {
+                "state": {
+                    "Idle": "Inactif",
+                    "Pre-wash": "Pré-lavage",
+                    "Wash": "Lavage",
+                    "Rinse": "Rinçage",
+                    "Drying": "Séchage",
+                    "Finished": "Terminé"
+                }
+            },
             "remaining_time": {
                 "name": "Temps restant"
             },
