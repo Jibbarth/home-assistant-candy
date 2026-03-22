@@ -616,11 +616,11 @@ class CandySaltSensor(CandyBaseSensor):
     @property
     def state(self) -> StateType:
         status: DishwasherStatus = self.coordinator.data
-        return "on" if status.salt_empty else "off"
+        return "problem" if status.salt_empty else "ok"
 
     @property
     def icon(self) -> str:
-        return "mdi:shaker-variant"
+        return "mdi:shaker"
 
 
 class CandyRinseSensor(CandyBaseSensor):
@@ -641,7 +641,7 @@ class CandyRinseSensor(CandyBaseSensor):
     @property
     def state(self) -> StateType:
         status: DishwasherStatus = self.coordinator.data
-        return "on" if status.rinse_aid_empty else "off"
+        return "problem" if status.rinse_aid_empty else "ok"
 
     @property
     def icon(self) -> str:

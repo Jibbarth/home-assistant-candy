@@ -51,10 +51,18 @@
                 "name": "3-in-1"
             },
             "salt_level": {
-                "name": "Salt level"
+                "name": "Salt level",
+                "state": {
+                    "ok": "Ok",
+                    "problem": "Problem"
+                }
             },
             "rinse_aid_level": {
-                "name": "Rinse aid level"
+                "name": "Rinse aid level",
+                "state": {
+                    "ok": "Ok",
+                    "problem": "Problem"
+                }
             }
         },
         "select": {
@@ -63,6 +71,14 @@
             },
             "program": {
                 "name": "Program",
+                "state": {
+                    "intensive": "Intensive (75°C)",
+                    "universal": "Universal (60°C)",
+                    "eco": "Eco (45°C)",
+                    "quick_24": "Quick 24'",
+                    "prewash": "Prewash",
+                    "quick_39": "Quick 39'"
+                },
                 "options": {
                     "intensive": "Intensive (75°C)",
                     "universal": "Universal (60°C)",
@@ -74,6 +90,12 @@
             },
             "candy_dishwasher_option": {
                 "name": "Option",
+                "state": {
+                    "standard": "Standard",
+                    "extra_dry": "Extra dry",
+                    "half_load": "Half load",
+                    "eco": "Eco"
+                },
                 "options": {
                     "standard": "Standard",
                     "extra_dry": "Extra dry",
